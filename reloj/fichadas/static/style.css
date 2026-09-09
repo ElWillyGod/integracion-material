@@ -1,0 +1,39 @@
+body {
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+#reloj {
+  width: 240px;
+  text-align: center;
+}
+
+#cedula {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 28px;
+  text-align: center;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+/* grid = grilla. Tres columnas iguales, los botones se acomodan solos
+   de a tres por fila en el orden del HTML. */
+#teclado {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+#teclado button {
+  font-size: 22px;
+  padding: 14px 0;
+  cursor: pointer;
+}
+
+#resultado {
+  font-size: 16px;
+  min-height: 40px;
+}

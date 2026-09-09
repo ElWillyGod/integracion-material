@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Reloj</title>
+  {# Lo que va entre llaves es Django, no HTML: se resuelve en el servidor. #}
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+  <div id="reloj">
+    <!-- readonly: los digitos solo entran tocando los botones,
+         no se puede escribir con el teclado de la computadora. -->
+    <input id="cedula" type="text" readonly>
+
+    <!-- Los diez digitos comparten class="num" y app.js los trata a todos
+         igual: el numero que escriben es su propio texto.
+         El orden importa, la grilla los acomoda de a 3 por fila. -->
+    <div id="teclado">
+      <button class="num">1</button>
+      <button class="num">2</button>
+      <button class="num">3</button>
+      <button class="num">4</button>
+      <button class="num">5</button>
+      <button class="num">6</button>
+      <button class="num">7</button>
+      <button class="num">8</button>
+      <button class="num">9</button>
+      <button id="borrar">C</button>
+      <button class="num">0</button>
+      <button id="enviar">OK</button>
+    </div>
+
+    <!-- Vacio a proposito: aca va a ir el mensaje en pantalla mas adelante. -->
+    <p id="resultado"></p>
+  </div>
+
+  <script src="{% static 'app.js' %}"></script>
+</body>
+</html>
