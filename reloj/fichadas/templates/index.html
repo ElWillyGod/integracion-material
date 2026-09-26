@@ -1,39 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Reloj</title>
-  {# Lo que va entre llaves es Django, no HTML: se resuelve en el servidor. #}
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sistema de control de ingreso y salida mediante cédula y teclado físico.">
+  <title>Control de ingreso y salida</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
+
 <body>
-  <div id="reloj">
-    <!-- readonly: los digitos solo entran tocando los botones,
-         no se puede escribir con el teclado de la computadora. -->
-    <input id="cedula" type="text" readonly>
-
-    <!-- Los diez digitos comparten class="num" y app.js los trata a todos
-         igual: el numero que escriben es su propio texto.
-         El orden importa, la grilla los acomoda de a 3 por fila. -->
-    <div id="teclado">
-      <button class="num">1</button>
-      <button class="num">2</button>
-      <button class="num">3</button>
-      <button class="num">4</button>
-      <button class="num">5</button>
-      <button class="num">6</button>
-      <button class="num">7</button>
-      <button class="num">8</button>
-      <button class="num">9</button>
-      <button id="borrar">C</button>
-      <button class="num">0</button>
-      <button id="enviar">OK</button>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 21V4.8A1.8 1.8 0 0 1 6.8 3H17v18"></path>
+          <path d="M9 7h4M9 11h4M9 15h4M3 21h18"></path>
+        </svg>
+      </span>
+      <span class="brand-copy"><strong>Control de ingreso</strong><span>Sistema institucional</span></span>
     </div>
+  </header>
 
-    <!-- Vacio a proposito: aca va a ir el mensaje en pantalla mas adelante. -->
-    <p id="resultado"></p>
-  </div>
+  <main class="page">
+    <section class="access-card" aria-labelledby="page-title">
+      <div class="time-panel" aria-live="off">
+        <time id="clock" class="clock">--:--:--</time>
+        <time id="date" class="date">Cargando fecha…</time>
+      </div>
+
+      <div class="card-body">
+        <div id="accessPanel">
+          <div class="heading">
+            <p class="eyebrow">Identificación</p>
+            <h1 id="page-title">Ingrese su identificación</h1>
+            <p class="heading-description">Escriba su cédula utilizando únicamente el teclado físico.</p>
+          </div>
+
+          <form id="accessForm" novalidate>
+            <label class="input-label" for="identificationInput">Cédula de identidad</label>
+            <input
+              id="identificationInput"
+              class="identification-input"
+              name="identification"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="8"
+              autocomplete="off"
+              placeholder="Ej.: 45789216"
+              aria-describedby="errorMessage"
+              autofocus
+            >
+            <p id="errorMessage" class="error" role="alert"></p>
+
+            <div id="actionHint" class="action-zone" hidden>
+              <p id="userPreview" class="user-preview"></p>
+              <div class="action-grid">
+                <div class="action-card entry">
+                  <kbd class="key-symbol">+</kbd>
+                  <span class="action-copy"><strong>Registrar ingreso</strong><small>Presione la tecla +</small></span>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div id="successPanel" class="success-panel" hidden>
+          <span class="success-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>
+          </span>
+          <p id="successLabel" class="success-label">Ingreso registrado</p>
+          <h2 id="successTitle">Bienvenido, Nombre</h2>
+          <dl class="movement-details">
+            <div><dt>Movimiento</dt><dd id="successMovement">Ingreso</dd></div>
+            <div><dt>Resultado</dt><dd id="successResult">A horario</dd></div>
+            <div><dt>Cédula</dt><dd id="successCi">4.578.921-6</dd></div>
+            <div><dt>Hora</dt><dd id="successTime">10:42:18</dd></div>
+          </dl>
+          <p class="reset-note">La pantalla se reiniciará automáticamente.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="credits">
+    Desarrollado por: Espínola Anabela - Jaime Ana - Gutierrez Agustina - Nemer Elsi
+  </footer>
 
   <script src="{% static 'app.js' %}"></script>
 </body>
