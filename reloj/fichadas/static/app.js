@@ -71,7 +71,9 @@ function formatCi(ci) {
   return `${ci.slice(0, 1)}.${ci.slice(1, 4)}.${ci.slice(4, 7)}-${ci.slice(7)}`;
 }
 
-function registerEntry() {
+// async permite usar await: el codigo espera la respuesta del servidor
+// sin congelar la pagina, y se lee de arriba hacia abajo.
+async function registerEntry() {
   if (enviando || !validateIdentification(true)) {
     identificationInput.focus();
     return;
@@ -80,33 +82,25 @@ function registerEntry() {
   const cedula = identificationInput.value;
   enviando = true;
 
-  // fetch() manda los datos al backend sin recargar la pagina.
-  // La direccion coincide con el path("fichar/") de urls.py.
-  fetch('/fichar/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    // El body siempre viaja como texto: stringify() convierte el objeto a
-    // JSON, y del otro lado json.loads() lo vuelve a armar en Python.
-    body: JSON.stringify({ cedula: cedula, fecha: fechaLocal() }),
-  })
-    // fetch es asincronico: los .then() se ejecutan cuando llega la
-    // respuesta. El primero lee el contenido, el segundo ya lo usa.
-    .then((respuesta) => respuesta.json())
-    .then((datos) => {
-      if (!datos.ok) {
-        showErrorMessage('La cédula no está registrada.');
-        identificationInput.focus();
-        return;
-      }
-      showSuccess(cedula, datos);
-    })
-    // Se ejecuta si el servidor esta apagado o respondio algo que no es JSON.
-    .catch(() => {
-      showErrorMessage('No se pudo conectar con el servidor.');
-    })
-    .finally(() => {
-      enviando = false;
+  try {
+    // Manda la cedula y la hora a /fichar/ (el path de urls.py).
+    const respuesta = await fetch('/fichar/', {
+      method: 'POST',
+      body: JSON.stringify({ cedula: cedula, fecha: fechaLocal() }),
     });
+    const datos = await respuesta.json();
+
+    if (datos.ok) {
+      showSuccess(cedula, datos);
+    } else {
+      showErrorMessage('La cédula no está registrada.');
+    }
+  } catch {
+    // El servidor esta apagado o respondio algo que no es JSON.
+    showErrorMessage('No se pudo conectar con el servidor.');
+  }
+
+  enviando = false;
 }
 
 // "datos" es el JSON que devuelve views.fichar:
