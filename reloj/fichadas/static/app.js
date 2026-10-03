@@ -14,6 +14,7 @@ const actionHint = document.getElementById('actionHint');
 const userPreview = document.getElementById('userPreview');
 const accessPanel = document.getElementById('accessPanel');
 const successPanel = document.getElementById('successPanel');
+const addButton = document.getElementById('addButton');
 let resetTimer;
 let enviando = false;
 
@@ -92,6 +93,7 @@ async function registerEntry() {
 
     if (datos.ok) {
       showSuccess(cedula, datos);
+      saveRecord(cedula, datos);
     } else {
       showErrorMessage('La cédula no está registrada.');
     }
@@ -101,6 +103,24 @@ async function registerEntry() {
   }
 
   enviando = false;
+}
+
+// Guarda el ingreso en registros.json a traves de /registrar/.
+// Si llego temprano o a horario, los minutos tarde son 0.
+async function saveRecord(cedula, datos) {
+  try {
+    await fetch('/registrar/', {
+      method: 'POST',
+      body: JSON.stringify({
+        cedula: cedula,
+        dia: fechaLocal().slice(0, 10), // "YYYY-MM-DD"
+        minutos_tarde: Math.max(datos.diferencia, 0),
+      }),
+    });
+  } catch {
+    // El ingreso ya se mostro; si falla el guardado solo queda en consola.
+    console.error('No se pudo guardar el registro de', cedula);
+  }
 }
 
 // "datos" es el JSON que devuelve views.fichar:
@@ -142,6 +162,9 @@ accessForm.addEventListener('submit', (event) => {
   validateIdentification(true);
   identificationInput.focus();
 });
+
+// Clic en el boton de registrar ingreso: hace lo mismo que la tecla +.
+addButton.addEventListener('click', registerEntry);
 
 document.addEventListener('keydown', (event) => {
   if (accessPanel.hidden) return;

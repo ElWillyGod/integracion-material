@@ -8,6 +8,7 @@ from . import views
 urlpatterns = [
     path("", views.index),          # la pagina con el teclado
     path("fichar/", views.fichar),  # recibe los fichajes (la barra final importa)
+    path("registrar/", views.registrar),  # guarda el ingreso en registros.json
 ]
 
 #127.0.0.1:8000

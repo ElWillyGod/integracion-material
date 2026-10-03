@@ -134,7 +134,7 @@ python manage.py runserver
 Vas a ver algo asi:
 
 ```
-Starting development server at http://127.0.0.1:8000/
+Starting development server at aaaaaa       
 Quit the server with CONTROL-C.
 ```
 

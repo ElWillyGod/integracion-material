@@ -220,6 +220,10 @@ h1 {
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 14px;
+  width: 100%;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .action-card.entry { border-color: #b9dfd2; background: #effaf6; }

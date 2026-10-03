@@ -1,12 +1,17 @@
 import json
 from datetime import datetime
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .horarios import HORARIOS
+
+# Archivo donde se acumulan los ingresos. Queda en la carpeta reloj/,
+# al lado de manage.py, y se crea solo con el primer registro.
+ARCHIVO_REGISTROS = settings.BASE_DIR / "registros.json"
 
 
 # Una "vista" en Django es una funcion que recibe la consulta que llego
@@ -73,3 +78,29 @@ def fichar(request):
             "mensaje": mensaje,
         }
     )
+
+
+@csrf_exempt
+@require_POST
+def registrar(request):
+    """Agrega {"cedula", "dia", "minutos_tarde"} al archivo de registros."""
+    datos = json.loads(request.body)
+    registro = {
+        "cedula": datos["cedula"],
+        "dia": datos["dia"],
+        "minutos_tarde": datos["minutos_tarde"],
+    }
+
+    # Leemos lo que ya habia (o una lista vacia la primera vez), sumamos el
+    # registro nuevo al final y volvemos a escribir el archivo completo.
+    if ARCHIVO_REGISTROS.exists():
+        registros = json.loads(ARCHIVO_REGISTROS.read_text(encoding="utf-8"))
+    else:
+        registros = []
+    registros.append(registro)
+    ARCHIVO_REGISTROS.write_text(
+        json.dumps(registros, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+
+    print(f"Registro guardado: {registro}")
+    return JsonResponse({"ok": True})
