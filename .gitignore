@@ -16,3 +16,6 @@ db.sqlite3
 
 # Temporales de Office al abrir los .docx
 ~$*
+
+# Registros de ingresos (datos de cada maquina, como la base)
+registros.json
